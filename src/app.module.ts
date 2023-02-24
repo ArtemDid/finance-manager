@@ -5,6 +5,8 @@ import { BankModule } from './bank/bank.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bank } from './entity/bank.entity';
+import { APP_FILTER } from '@nestjs/core';
+import { ErrorFilter } from './error/error.filter';
 
 @Module({
   imports: [
@@ -25,6 +27,12 @@ import { Bank } from './entity/bank.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: ErrorFilter,
+    // },
+  ],
 })
 export class AppModule {}
