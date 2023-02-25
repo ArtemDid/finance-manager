@@ -4,19 +4,25 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
+  DeleteDateColumn,
 } from 'typeorm';
 
-@Entity('bank')
-export class Bank {
+@Entity('category')
+@Unique(['name'])
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  firstName: string;
+  @Column({ default: 'one' })
+  name: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
