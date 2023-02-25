@@ -64,7 +64,7 @@ export class BankController {
   async deleteById(@Param('id') id: string) {
     const bank = await this.bankService.deleteById(id);
 
-    if (!bank.affected) {
+    if (!bank[1]) {
       this.logger.log(`wasn't deleted`);
       return new HttpException(`wasn't deleted`, HttpStatus.BAD_GATEWAY);
     }

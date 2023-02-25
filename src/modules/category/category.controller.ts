@@ -19,33 +19,33 @@ import { CategoryDTO, createCategorySchema } from './dto/category.dto';
 @Controller('category')
 export class CategoryController {
   private readonly logger = new Logger(CategoryController.name);
-  constructor(private readonly bankService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
   getAll(): Promise<Category[]> {
-    return this.bankService.getAll();
+    return this.categoryService.getAll();
   }
 
   @Get(':id')
   getById(@Param('id') id: string): Promise<Category> {
-    return this.bankService.getById(id);
+    return this.categoryService.getById(id);
   }
 
   @Post()
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async postBank(@Query() params: CategoryDTO) {
-    const bank = await this.bankService.postBank(params);
+    const category = await this.categoryService.postBank(params);
 
-    this.logger.log(bank.raw[0].id + ' was upseted');
-    return bank.raw;
+    this.logger.log(category.raw[0].id + ' was upseted');
+    return category.raw;
   }
 
   @Put(':id')
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async putBank(@Param('id') id: string, @Query() params: CategoryDTO) {
-    const bank = await this.bankService.putBank(params, id);
+    const category = await this.categoryService.putBank(params, id);
 
-    if (!bank.affected) {
+    if (!category.affected) {
       this.logger.log(`wasn't updated`);
       return new HttpException(`wasn't updated`, HttpStatus.BAD_GATEWAY);
     }
@@ -56,9 +56,9 @@ export class CategoryController {
 
   @Delete(':id')
   async deleteById(@Param('id') id: string) {
-    const bank = await this.bankService.deleteById(id);
+    const category = await this.categoryService.deleteById(id);
 
-    if (!bank.affected) {
+    if (!category[1]) {
       this.logger.log(`wasn't deleted`);
       return new HttpException(`wasn't deleted`, HttpStatus.BAD_GATEWAY);
     }

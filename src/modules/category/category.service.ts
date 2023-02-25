@@ -9,26 +9,26 @@ import { CategoryDTO } from './dto/category.dto';
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
-    private usersRepository: Repository<Category>,
+    private categotyRepository: Repository<Category>,
     private readonly httpService: HttpService,
   ) {}
 
   getAll(): Promise<Category[]> {
-    return this.usersRepository.find();
+    return this.categotyRepository.find();
   }
 
   getById(id: string): Promise<Category> {
-    return this.usersRepository.findOneBy({
+    return this.categotyRepository.findOneBy({
       id: +id,
     });
   }
 
   postBank(params: CategoryDTO) {
-    return this.usersRepository.upsert(params, ['name']);
+    return this.categotyRepository.upsert(params, ['name']);
   }
 
   putBank(params: CategoryDTO, id: string) {
-    return this.usersRepository
+    return this.categotyRepository
       .createQueryBuilder()
       .update(Category)
       .set(params)
@@ -37,10 +37,14 @@ export class CategoryService {
   }
 
   deleteById(id: string) {
-    return this.usersRepository
-      .createQueryBuilder()
-      .softDelete()
-      .where('id = :id', { id: +id })
-      .execute();
+    return this.categotyRepository.query(
+      `DELETE FROM category
+        WHERE category.id = ${id}
+          AND NOT EXISTS (
+            SELECT 1
+            FROM transaction_category
+            WHERE transaction_category."categoryId" = ${id}
+          );`,
+    );
   }
 }

@@ -10,6 +10,9 @@ import { ErrorFilter } from './lib/middlewares/error/error.filter';
 import { CategoryController } from './modules/category/category.controller';
 import { CategoryModule } from './modules/category/category.module';
 import { Category } from './lib/entities/category.entity';
+import { TransactionModule } from './modules/transaction/transaction.module';
+import { Transaction } from './lib/entities/transaction.entity';
+import { TransactionCategory } from './lib/entities/transaction-category.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { Category } from './lib/entities/category.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Bank, Category],
+      entities: [Bank, Category, Transaction, TransactionCategory],
       synchronize: true,
       migrations: ['migrations/'],
       autoLoadEntities: true,
@@ -29,6 +32,7 @@ import { Category } from './lib/entities/category.entity';
     }),
     CategoryModule,
     BankModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
