@@ -26,6 +26,14 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Environment Variable
+
+.env.example rename to .env and add your own variable values.
+
+## Node
+
+v19.7.0
+
 ## Installation
 
 ```bash
