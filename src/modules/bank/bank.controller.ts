@@ -20,7 +20,9 @@ import { ErrorFilter } from '../../lib/middlewares/error/error.filter';
 import { BankService } from './bank.service';
 import { BankDTO, createBankSchema } from './dto/bank.dto';
 import { JoiValidationPipe } from '../../lib/validator/validator';
+import { ApiQuery, ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Bank')
 @Controller('bank')
 export class BankController {
   private readonly logger = new Logger(BankController.name);
@@ -32,11 +34,13 @@ export class BankController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id' })
   getById(@Param('id') id: string): Promise<Bank> {
     return this.bankService.getById(id);
   }
 
   @Post()
+  @ApiQuery({ type: BankDTO })
   @UsePipes(new JoiValidationPipe(createBankSchema))
   async postBank(@Query() params: BankDTO) {
     const bank = await this.bankService.postBank(params);
@@ -46,6 +50,8 @@ export class BankController {
   }
 
   @Put(':id')
+  @ApiParam({ name: 'id' })
+  @ApiQuery({ type: BankDTO })
   @UsePipes(new JoiValidationPipe(createBankSchema))
   async putBank(@Param('id') id: string, @Query() params: BankDTO) {
     console.log('******* ', id, params);
@@ -61,6 +67,7 @@ export class BankController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id' })
   async deleteById(@Param('id') id: string) {
     const bank = await this.bankService.deleteById(id);
 

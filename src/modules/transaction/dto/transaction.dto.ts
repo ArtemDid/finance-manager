@@ -5,6 +5,11 @@ import {
   TransactionFormat,
 } from '../../../lib/entities/transaction.entity';
 
+export enum Type {
+  profitable = 'profitable',
+  consumable = 'consumable',
+}
+
 export const createTransactionSchema = Joi.object({
   amount: Joi.number().required(),
   type: Joi.string().valid('profitable', 'consumable').required(),
@@ -14,7 +19,7 @@ export const createTransactionSchema = Joi.object({
 
 export class TransactionDTO {
   readonly amount: number;
-  readonly type: TransactionFormat;
+  readonly type: Type;
   readonly bankId: number;
   readonly categories: Array<number>;
 }

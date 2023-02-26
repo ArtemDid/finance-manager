@@ -10,6 +10,7 @@ import {
   Query,
   UsePipes,
 } from '@nestjs/common';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Transaction } from '../../lib/entities/transaction.entity';
 import { JoiValidationPipe } from '../../lib/validator/validator';
 import {
@@ -19,6 +20,7 @@ import {
 } from './dto/transaction.dto';
 import { TransactionService } from './transaction.service';
 
+@ApiTags('Transaction')
 @Controller('transaction')
 export class TransactionController {
   private readonly logger = new Logger(TransactionController.name);
@@ -35,6 +37,7 @@ export class TransactionController {
   }
 
   @Post()
+  @ApiQuery({ type: TransactionDTO })
   @UsePipes(new JoiValidationPipe(createTransactionSchema))
   async postTransaction(@Query() params: TransactionDTO) {
     try {
@@ -51,6 +54,7 @@ export class TransactionController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id' })
   async deleteById(@Param('id') id: string) {
     await this.transactionService.deleteById(id);
 

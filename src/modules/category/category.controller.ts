@@ -11,6 +11,7 @@ import {
   Query,
   UsePipes,
 } from '@nestjs/common';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Category } from '../../lib/entities/category.entity';
 import { JoiValidationPipe } from '../../lib/validator/validator';
 import { CategoryService, Statistics } from './category.service';
@@ -21,6 +22,7 @@ import {
   createCategoryStatSchema,
 } from './dto/category.dto';
 
+@ApiTags('Category')
 @Controller('category')
 export class CategoryController {
   private readonly logger = new Logger(CategoryController.name);
@@ -32,6 +34,7 @@ export class CategoryController {
   }
 
   @Get('/statistics')
+  @ApiQuery({ type: CategoryStatDTO })
   @UsePipes(new JoiValidationPipe(createCategoryStatSchema))
   async getStatistics(@Query() params: CategoryStatDTO) {
     const service: Array<Statistics> = await this.categoryService.getStatistics(
@@ -46,11 +49,13 @@ export class CategoryController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id' })
   getById(@Param('id') id: string): Promise<Category> {
     return this.categoryService.getById(id);
   }
 
   @Post()
+  @ApiQuery({ type: CategoryDTO })
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async postBank(@Query() params: CategoryDTO) {
     const category = await this.categoryService.postCategory(params);
@@ -60,6 +65,8 @@ export class CategoryController {
   }
 
   @Put(':id')
+  @ApiParam({ name: 'id' })
+  @ApiQuery({ type: CategoryDTO })
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async putBank(@Param('id') id: string, @Query() params: CategoryDTO) {
     const category = await this.categoryService.putCategory(params, id);
@@ -74,6 +81,7 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id' })
   async deleteById(@Param('id') id: string) {
     const category = await this.categoryService.deleteById(id);
 
