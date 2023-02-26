@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    container_name: postgres-lesson-1
+    container_name: postgres
     image: postgres:14.0-alpine
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT}
   backend:
-    container_name: backend-nest-lesson-1
+    container_name: backend-nest
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -26,8 +26,3 @@ services:
     environment:
       - API_PORT=${PORT}
       - API_HOST=${DB_HOST}
-  # - TYPEORM_USERNAME=${TYPEORM_USERNAME}
-  # - TYPEORM_PASSWORD=${TYPEORM_PASSWORD}
-  # - TYPEORM_DATABASE=${TYPEORM_DATABASE}
-  # - TYPEORM_PORT=${TYPEORM_PORT}
-  # - TYPEORM_HOST=db
