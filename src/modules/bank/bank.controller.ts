@@ -52,7 +52,7 @@ export class BankController {
     const bank = await this.bankService.putBank(params, id);
 
     if (!bank.affected) {
-      this.logger.log(`wasn't updated`);
+      this.logger.warn(`wasn't updated`);
       return new HttpException(`wasn't updated`, HttpStatus.BAD_GATEWAY);
     }
 
@@ -65,7 +65,7 @@ export class BankController {
     const bank = await this.bankService.deleteById(id);
 
     if (!bank[1]) {
-      this.logger.log(`wasn't deleted`);
+      this.logger.warn(`wasn't deleted`);
       return new HttpException(`wasn't deleted`, HttpStatus.BAD_GATEWAY);
     }
 

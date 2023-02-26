@@ -3,18 +3,44 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from '../../lib/entities/category.entity';
-import { CategoryDTO } from './dto/category.dto';
+import { CategoryDTO, CategoryStatDTO } from './dto/category.dto';
+
+export type Statistics = { name: string; balance: number };
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(Category)
     private categotyRepository: Repository<Category>,
+
+    @InjectRepository(Category)
+    private categotyRepositoryStat: Repository<Statistics>,
+
     private readonly httpService: HttpService,
   ) {}
 
   getAll(): Promise<Category[]> {
     return this.categotyRepository.find();
+  }
+
+  getStatistics(params: CategoryStatDTO): Promise<Array<Statistics>> {
+    return this.categotyRepositoryStat.query(`
+    SELECT
+c.name as name,
+SUM(CASE
+WHEN t.type = 'profitable' THEN t.amount
+ELSE -t.amount
+END) as balance
+FROM
+category c
+INNER JOIN transaction_category tc ON c.id = tc."categoryId"
+INNER JOIN transaction t ON tc."transactionId" = t.id
+WHERE
+c.id IN (${params.categoryIds})
+AND t."createdAt" BETWEEN '${params.fromPeriod}' AND '${params.toPeriod}'
+GROUP BY
+c.name;
+    `);
   }
 
   getById(id: string): Promise<Category> {
@@ -23,11 +49,11 @@ export class CategoryService {
     });
   }
 
-  postBank(params: CategoryDTO) {
+  postCategory(params: CategoryDTO) {
     return this.categotyRepository.upsert(params, ['name']);
   }
 
-  putBank(params: CategoryDTO, id: string) {
+  putCategory(params: CategoryDTO, id: string) {
     return this.categotyRepository
       .createQueryBuilder()
       .update(Category)

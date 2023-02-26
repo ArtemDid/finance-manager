@@ -13,8 +13,13 @@ import {
 } from '@nestjs/common';
 import { Category } from '../../lib/entities/category.entity';
 import { JoiValidationPipe } from '../../lib/validator/validator';
-import { CategoryService } from './category.service';
-import { CategoryDTO, createCategorySchema } from './dto/category.dto';
+import { CategoryService, Statistics } from './category.service';
+import {
+  CategoryDTO,
+  CategoryStatDTO,
+  createCategorySchema,
+  createCategoryStatSchema,
+} from './dto/category.dto';
 
 @Controller('category')
 export class CategoryController {
@@ -26,6 +31,20 @@ export class CategoryController {
     return this.categoryService.getAll();
   }
 
+  @Get('/statistics')
+  @UsePipes(new JoiValidationPipe(createCategoryStatSchema))
+  async getStatistics(@Query() params: CategoryStatDTO) {
+    const service: Array<Statistics> = await this.categoryService.getStatistics(
+      params,
+    );
+
+    const obj = {};
+    for (const item of service) {
+      obj[item.name] = Number(item.balance);
+    }
+    return obj;
+  }
+
   @Get(':id')
   getById(@Param('id') id: string): Promise<Category> {
     return this.categoryService.getById(id);
@@ -34,7 +53,7 @@ export class CategoryController {
   @Post()
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async postBank(@Query() params: CategoryDTO) {
-    const category = await this.categoryService.postBank(params);
+    const category = await this.categoryService.postCategory(params);
 
     this.logger.log(category.raw[0].id + ' was upseted');
     return category.raw;
@@ -43,10 +62,10 @@ export class CategoryController {
   @Put(':id')
   @UsePipes(new JoiValidationPipe(createCategorySchema))
   async putBank(@Param('id') id: string, @Query() params: CategoryDTO) {
-    const category = await this.categoryService.putBank(params, id);
+    const category = await this.categoryService.putCategory(params, id);
 
     if (!category.affected) {
-      this.logger.log(`wasn't updated`);
+      this.logger.warn(`wasn't updated`);
       return new HttpException(`wasn't updated`, HttpStatus.BAD_GATEWAY);
     }
 
@@ -59,7 +78,7 @@ export class CategoryController {
     const category = await this.categoryService.deleteById(id);
 
     if (!category[1]) {
-      this.logger.log(`wasn't deleted`);
+      this.logger.warn(`wasn't deleted`);
       return new HttpException(`wasn't deleted`, HttpStatus.BAD_GATEWAY);
     }
 
