@@ -54,7 +54,6 @@ export class BankController {
   @ApiQuery({ type: BankDTO })
   @UsePipes(new JoiValidationPipe(createBankSchema))
   async putBank(@Param('id') id: string, @Query() params: BankDTO) {
-    console.log('******* ', id, params);
     const bank = await this.bankService.putBank(params, id);
 
     if (!bank.affected) {
